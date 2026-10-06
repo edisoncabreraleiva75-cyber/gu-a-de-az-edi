@@ -27,7 +27,7 @@ export interface DuaMethodologyRow {
   id: string;
   momentoSena: string;
   faseCodigo: '3.1' | '3.2' | '3.3' | '3.4' | '4.0';
-  principioDua: 'Compromiso (Redes Afectivas)' | 'Representación (Redes de Reconocimiento)' | 'Acción y Expresión (Redes Estratégicas)';
+  principioDua: 'Compromiso (Redes Afectivas)' | 'Representación (Redes de Reconocimiento)' | 'Acción y Expresión (Redes Estratégicas)' | 'Compromiso, Representación y Expresión';
   pautaDua: string;
   estrategiaAgropecuaria: string;
   integracionMultilingue: {
@@ -80,6 +80,7 @@ export interface LearningGuideModel {
     };
     transferencia: {
       titulo: string;
+      descripcion?: string;
       retoEnFinca: string;
       estrategiaDua: string;
       multilinguismo: string;
@@ -433,7 +434,7 @@ export const PRESET_GUIDES: LearningGuideModel[] = [
         preguntaProblematizadora: '¿De qué manera una falla en el registro del cuaderno de campo o una mala calibración de la bomba de aspersión en la vereda puede arruinar la economía de una comunidad exportadora? ¿Qué rol juega la ética profesional del tecnólogo agropecuario en la inocuidad alimentaria?',
         multilinguismo: 'Conceptos clave analizados: "Maximum Residue Limit (MRL) / Limite Maximale de Résidus (LMR)", "Food Alert / Alerte Sanitaire".'
       },
-      actividadesContextualizacion: {
+      contextualizacion: {
         titulo: '3.2 Estaciones de autodiagnóstico: Saberes empíricos vs. Estándar técnico',
         descripcion: 'En cuadrillas de trabajo en la finca de formación SENA, los aprendices rotan por 3 estaciones agropecuarias: Estación 1: Identificación táctil y visual de estados fenológicos (floración, cuajado, engorde, cosecha) y daños foliares; Estación 2: Reconocimiento de equipos de protección personal (EPP) y boquillas de pulverización; Estación 3: Lectura de etiquetas de bioinsumos y análisis de pictogramas SGA/GHS.',
         estrategiaDua: 'DUA Pauta 8.3: Trabajo colaborativo con roles rotativos adaptados a fortalezas individuales (explorador de campo, registrador de datos, portavoz técnico). Soporte visual táctil para superar barreras lectoras.',
@@ -528,7 +529,7 @@ export const PRESET_GUIDES: LearningGuideModel[] = [
         preguntaProblematizadora: '¿Cómo influye la microbiología de levaduras y bacterias lácticas en el valor final que recibe la familia caficultora?',
         multilinguismo: 'Términos de catación: "Cup Profile / Profil de Tasse", "Acidity / Acidité", "Body / Corps", "Aftertaste / Longueur en bouche".'
       },
-      actividadesContextualizacion: {
+      contextualizacion: {
         titulo: '3.2 Estaciones de medición física y química del grano',
         descripcion: 'Uso de refractómetros, termómetros sumergibles y cintas medidoras de pH en tanques de fermentación piloto.',
         estrategiaDua: 'Múltiples opciones para la percepción (DUA Pauta 1): Calibración con muestras reales, escalas de color pantone para cerezas maduras.',
