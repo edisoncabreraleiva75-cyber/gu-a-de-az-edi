@@ -1,0 +1,6 @@
+{
+  "name": "SENA AgroDUA - Matriz Metodológica y Diseñador de Guías FPI",
+  "description": "Herramienta metodológica y plantilla operativa para formular Guías de Aprendizaje SENA con enfoque agropecuario, DUA y trilingüismo técnico (ES/EN/FR).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
