@@ -1,9 +1,74 @@
 import React, { useState } from 'react';
 import { PEDAGOGICAL_REASONING } from '../data/curriculumData';
-import { Brain, Sparkles, CheckCircle, Compass, Target, BookOpen, ChevronRight } from 'lucide-react';
+import { 
+  Brain, 
+  Sparkles, 
+  CheckCircle, 
+  Compass, 
+  Target, 
+  BookOpen, 
+  ChevronRight, 
+  Copy, 
+  Check, 
+  Download, 
+  ArrowRight,
+  Printer
+} from 'lucide-react';
 
-export const ReasoningView: React.FC = () => {
+interface ReasoningViewProps {
+  onNavigateToMatrix?: () => void;
+  onNavigateToGuide?: () => void;
+}
+
+export const ReasoningView: React.FC<ReasoningViewProps> = ({ 
+  onNavigateToMatrix, 
+  onNavigateToGuide 
+}) => {
   const [activeFase, setActiveFase] = useState<'all' | '1' | '2' | '3' | '4'>('all');
+  const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
+  const getReasoningMarkdown = () => {
+    return `### 1. RAZONAMIENTO PASO A PASO (<razonamiento_pedagogico>)
+
+#### Fase 1: Análisis Curricular Agropecuario (FPI - SENA)
+${PEDAGOGICAL_REASONING.fase1.detalles.map(d => `* **${d.aspecto}:** ${d.analisis}`).join('\n\n')}
+
+#### Fase 2: Articulación DUA/UDL en Ambientes de Aprendizaje Agropecuarios
+${PEDAGOGICAL_REASONING.fase2.detalles.map(d => `* **${d.red}:**\n  - Pautas: ${d.pautas}\n  - Aplicación en Campo: ${d.aplicacionAgro}`).join('\n\n')}
+
+#### Fase 3: Estrategia Lingüística Integrada (Español, Inglés, Francés)
+${PEDAGOGICAL_REASONING.fase3.detalles.map(d => `* **${d.nivel}:** ${d.descripcion}`).join('\n\n')}
+
+#### Fase 4: Estructura GFPI del SENA (Guía de Aprendizaje Última Versión)
+${PEDAGOGICAL_REASONING.fase4.detalles.map(d => `* **${d.seccion}:** ${d.descripcion}`).join('\n\n')}
+`;
+  };
+
+  const handleCopyAll = () => {
+    navigator.clipboard.writeText(getReasoningMarkdown());
+    setCopiedSection('all');
+    setTimeout(() => setCopiedSection(null), 2500);
+  };
+
+  const handleCopyPhase = (faseKey: 'fase1' | 'fase2' | 'fase3' | 'fase4', title: string) => {
+    const data = (PEDAGOGICAL_REASONING as any)[faseKey];
+    const text = `#### ${data.titulo}\n${data.subtitulo}\n\n` + 
+      (data.detalles.map((d: any) => `* **${d.aspecto || d.red || d.nivel || d.seccion}:** ${d.analisis || d.descripcion || d.aplicacionAgro}`).join('\n\n'));
+    navigator.clipboard.writeText(text);
+    setCopiedSection(faseKey);
+    setTimeout(() => setCopiedSection(null), 2500);
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([getReasoningMarkdown()], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'SENA_Razonamiento_Pedagogico_DUA.md';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -11,12 +76,33 @@ export const ReasoningView: React.FC = () => {
       <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 rounded-2xl p-6 sm:p-8 text-white border border-slate-700/80 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         
-        <div className="relative z-10 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold mb-4 font-mono">
-            <Brain className="h-4 w-4" />
-            <span>&lt;razonamiento_pedagogico&gt; • ZERO-SHOT CHAIN OF THOUGHT</span>
+        <div className="relative z-10 max-w-4xl space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold font-mono">
+              <Brain className="h-4 w-4" />
+              <span>&lt;razonamiento_pedagogico&gt; • ZERO-SHOT CHAIN OF THOUGHT</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopyAll}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all cursor-pointer"
+              >
+                {copiedSection === 'all' ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSection === 'all' ? '¡Copiado!' : 'Copiar Razonamiento'}</span>
+              </button>
+
+              <button
+                onClick={handleDownload}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#39A900] hover:bg-emerald-600 text-white shadow-md transition-all cursor-pointer"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Descargar .md</span>
+              </button>
+            </div>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-3">
+
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Fundamentación Curricular y Metodológica SENA - DUA
           </h2>
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
@@ -24,7 +110,7 @@ export const ReasoningView: React.FC = () => {
           </p>
 
           {/* Quick Stats Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-700/80">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/80">
             <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-700">
               <span className="text-[11px] text-slate-400 block font-medium">Modelo Pedagógico</span>
               <span className="text-sm font-bold text-emerald-400">FPI SENA (Saber / Hacer / Ser)</span>
@@ -46,64 +132,79 @@ export const ReasoningView: React.FC = () => {
       </div>
 
       {/* Filter Tabs for Phases */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-2">Filtrar Fase:</span>
-        <button
-          onClick={() => setActiveFase('all')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeFase === 'all'
-              ? 'bg-slate-900 text-white shadow-sm'
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-          }`}
-        >
-          Ver Todas (1 a 4)
-        </button>
-        <button
-          onClick={() => setActiveFase('1')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeFase === '1'
-              ? 'bg-emerald-700 text-white shadow-sm'
-              : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-          }`}
-        >
-          1. Curricular Agropecuario
-        </button>
-        <button
-          onClick={() => setActiveFase('2')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeFase === '2'
-              ? 'bg-purple-700 text-white shadow-sm'
-              : 'bg-purple-50 text-purple-800 hover:bg-purple-100'
-          }`}
-        >
-          2. Articulación DUA
-        </button>
-        <button
-          onClick={() => setActiveFase('3')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeFase === '3'
-              ? 'bg-sky-700 text-white shadow-sm'
-              : 'bg-sky-50 text-sky-800 hover:bg-sky-100'
-          }`}
-        >
-          3. Lingüística Trilingüe
-        </button>
-        <button
-          onClick={() => setActiveFase('4')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-            activeFase === '4'
-              ? 'bg-amber-700 text-white shadow-sm'
-              : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
-          }`}
-        >
-          4. Estructura GFPI
-        </button>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">Filtrar Fase:</span>
+          <button
+            onClick={() => setActiveFase('all')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeFase === 'all'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            Ver Todas (1 a 4)
+          </button>
+          <button
+            onClick={() => setActiveFase('1')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeFase === '1'
+                ? 'bg-emerald-700 text-white shadow-sm'
+                : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+            }`}
+          >
+            1. Curricular Agropecuario
+          </button>
+          <button
+            onClick={() => setActiveFase('2')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeFase === '2'
+                ? 'bg-purple-700 text-white shadow-sm'
+                : 'bg-purple-50 text-purple-800 hover:bg-purple-100'
+            }`}
+          >
+            2. Articulación DUA
+          </button>
+          <button
+            onClick={() => setActiveFase('3')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeFase === '3'
+                ? 'bg-sky-700 text-white shadow-sm'
+                : 'bg-sky-50 text-sky-800 hover:bg-sky-100'
+            }`}
+          >
+            3. Lingüística Trilingüe
+          </button>
+          <button
+            onClick={() => setActiveFase('4')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeFase === '4'
+                ? 'bg-amber-700 text-white shadow-sm'
+                : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
+            }`}
+          >
+            4. Estructura GFPI
+          </button>
+        </div>
+
+        {/* Quick jump actions */}
+        <div className="flex items-center gap-2">
+          {onNavigateToMatrix && (
+            <button
+              onClick={onNavigateToMatrix}
+              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-900 cursor-pointer"
+            >
+              <span>Ver Matriz DUA</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Phase 1: Análisis Curricular Agropecuario */}
       {(activeFase === 'all' || activeFase === '1') && (
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="bg-emerald-50/70 border-b border-emerald-100 p-5 sm:p-6 flex items-start justify-between">
+          <div className="bg-emerald-50/70 border-b border-emerald-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1">
                 <Target className="h-4 w-4 text-emerald-600" />
@@ -116,9 +217,16 @@ export const ReasoningView: React.FC = () => {
                 {PEDAGOGICAL_REASONING.fase1.subtitulo}
               </p>
             </div>
-            <span className="hidden sm:inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full border border-emerald-200">
-              Sector Agropecuario
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => handleCopyPhase('fase1', PEDAGOGICAL_REASONING.fase1.titulo)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-100 text-emerald-800 border border-emerald-200 transition-all cursor-pointer flex items-center gap-1"
+                title="Copiar texto de esta fase"
+              >
+                {copiedSection === 'fase1' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSection === 'fase1' ? 'Copiado' : 'Copiar Fase'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="p-5 sm:p-6 space-y-6">
@@ -166,7 +274,7 @@ export const ReasoningView: React.FC = () => {
       {/* Phase 2: Articulación DUA/UDL */}
       {(activeFase === 'all' || activeFase === '2') && (
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="bg-purple-50/70 border-b border-purple-100 p-5 sm:p-6 flex items-start justify-between">
+          <div className="bg-purple-50/70 border-b border-purple-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-800 uppercase tracking-wider mb-1">
                 <Sparkles className="h-4 w-4 text-purple-600" />
@@ -179,9 +287,16 @@ export const ReasoningView: React.FC = () => {
                 {PEDAGOGICAL_REASONING.fase2.subtitulo}
               </p>
             </div>
-            <span className="hidden sm:inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full border border-purple-200">
-              CAST DUA 2026
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => handleCopyPhase('fase2', PEDAGOGICAL_REASONING.fase2.titulo)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-100 text-purple-800 border border-purple-200 transition-all cursor-pointer flex items-center gap-1"
+                title="Copiar texto de esta fase"
+              >
+                {copiedSection === 'fase2' ? <Check className="h-3.5 w-3.5 text-purple-600" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSection === 'fase2' ? 'Copiado' : 'Copiar Fase'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="p-5 sm:p-6 space-y-6">
@@ -215,7 +330,7 @@ export const ReasoningView: React.FC = () => {
       {/* Phase 3: Estrategia Lingüística Integrada */}
       {(activeFase === 'all' || activeFase === '3') && (
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="bg-sky-50/70 border-b border-sky-100 p-5 sm:p-6 flex items-start justify-between">
+          <div className="bg-sky-50/70 border-b border-sky-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-800 uppercase tracking-wider mb-1">
                 <Compass className="h-4 w-4 text-sky-600" />
@@ -228,9 +343,16 @@ export const ReasoningView: React.FC = () => {
                 {PEDAGOGICAL_REASONING.fase3.subtitulo}
               </p>
             </div>
-            <span className="hidden sm:inline-block px-3 py-1 bg-sky-100 text-sky-800 text-xs font-semibold rounded-full border border-sky-200">
-              Español • Inglés • Francés
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => handleCopyPhase('fase3', PEDAGOGICAL_REASONING.fase3.titulo)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-100 text-sky-800 border border-sky-200 transition-all cursor-pointer flex items-center gap-1"
+                title="Copiar texto de esta fase"
+              >
+                {copiedSection === 'fase3' ? <Check className="h-3.5 w-3.5 text-sky-600" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSection === 'fase3' ? 'Copiado' : 'Copiar Fase'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="p-5 sm:p-6 space-y-4">
@@ -256,7 +378,7 @@ export const ReasoningView: React.FC = () => {
       {/* Phase 4: Estructura GFPI del SENA */}
       {(activeFase === 'all' || activeFase === '4') && (
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="bg-amber-50/70 border-b border-amber-100 p-5 sm:p-6 flex items-start justify-between">
+          <div className="bg-amber-50/70 border-b border-amber-100 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">
                 <BookOpen className="h-4 w-4 text-amber-600" />
@@ -269,9 +391,16 @@ export const ReasoningView: React.FC = () => {
                 {PEDAGOGICAL_REASONING.fase4.subtitulo}
               </p>
             </div>
-            <span className="hidden sm:inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full border border-amber-200">
-              Secuencia Didáctica FPI
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => handleCopyPhase('fase4', PEDAGOGICAL_REASONING.fase4.titulo)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-100 text-amber-800 border border-amber-200 transition-all cursor-pointer flex items-center gap-1"
+                title="Copiar texto de esta fase"
+              >
+                {copiedSection === 'fase4' ? <Check className="h-3.5 w-3.5 text-amber-600" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSection === 'fase4' ? 'Copiado' : 'Copiar Fase'}</span>
+              </button>
+            </div>
           </div>
 
           <div className="p-5 sm:p-6 space-y-4">
@@ -291,6 +420,32 @@ export const ReasoningView: React.FC = () => {
           </div>
         </section>
       )}
+
+      {/* Bottom Navigation CTA */}
+      <div className="bg-emerald-900 text-white rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+        <div>
+          <h4 className="font-bold text-base">¿Listo para aplicar esta metodología a una guía real?</h4>
+          <p className="text-emerald-200 text-xs mt-0.5">Explore la matriz DUA o empiece a diligenciar la plantilla GFPI-F-135 con ejemplos agropecuarios.</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {onNavigateToMatrix && (
+            <button
+              onClick={onNavigateToMatrix}
+              className="px-4 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer transition-all border border-emerald-600"
+            >
+              Ver Matriz Metodológica
+            </button>
+          )}
+          {onNavigateToGuide && (
+            <button
+              onClick={onNavigateToGuide}
+              className="px-4 py-2 bg-white text-emerald-900 hover:bg-emerald-50 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-md"
+            >
+              Abrir Plantilla GFPI-F-135
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

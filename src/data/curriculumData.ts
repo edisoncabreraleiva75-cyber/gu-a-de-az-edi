@@ -592,5 +592,193 @@ export const PRESET_GUIDES: LearningGuideModel[] = [
       dependencia: 'SENA Regional Huila / Centro de Gestión y Desarrollo Sostenible',
       fecha: 'Octubre de 2026'
     }
+  },
+  {
+    id: 'guia-cacao-exportacion',
+    title: 'Guía de Aprendizaje: Poscosecha, Calidad y Trazabilidad en Cacao Fino de Aroma',
+    identificacion: {
+      denominacionPrograma: 'Tecnólogo en Producción Agropecuaria Ecológica',
+      codigoPrograma: '723119 Versión 101',
+      nombreProyecto: 'Fortalecimiento de la cadena agroexportadora de cacao especial mediante bio-inoculación y trazabilidad',
+      faseProyecto: 'Ejecución: Estandarización de protocolos de fermentación en cajones de madera y secado solar',
+      actividadProyecto: 'AP 4: Aplicar protocolos de fermentación aeróbica/anaeróbica y monitoreo de cadmio y micotoxinas',
+      competencia: '270401019: Realizar labores de beneficio y poscosecha de cacao según requerimientos de inocuidad y estándares internacionales',
+      resultadosAprendizaje: [
+        'RAP 01: Clasificar mazorcas y granos en baba verificando índices de madurez y sanidad vegetal.',
+        'RAP 02: Controlar la curva térmica y de acidez volátil durante la fermentación en cajones tipo escalera.',
+        'RAP 03: Elaborar la ficha técnica trilingüe (ES / EN / FR) para compradores de chocolatería fina europea.'
+      ],
+      duracionGuiaHoras: 44,
+      regional: 'Regional Santander / Arauca / Nariño',
+      centroFormacion: 'Centro Agroempresarial y Turístico de los Andes / Centro de Formación Agroindustrial'
+    },
+    presentacion: 'Estimado Aprendiz: Colombia posee una distinción privilegiada conferida por la Organización Internacional del Cacao (ICCO) como país exportador de Cacao Fino y de Aroma (Fine or Flavour Cocoa / Cacao Fin et d’Arôme). No obstante, la Unión Europea exige límites estrictos de cadmio (Reglamento UE 488/2014) y ausencia total de ocratoxina A. Durante esta guía, usted aprenderá a conducir fermentaciones controladas en cajones de laurel o cedro, aplicar bioenmiendas para inmovilizar metales pesados en suelo y generar la documentación comercial trilingüe requerida para transacciones en mercados especializados.',
+    actividades: {
+      reflexionInicial: {
+        titulo: '3.1 Dilema: ¿Por qué Europa rechaza lotes de cacao con notas amargas o presencia de cadmio?',
+        descripcion: 'Estudio de caso sobre la interceptación de un embarque marítimo de cacao criollo hacia Suiza debido a niveles de cadmio superiores a 0.80 mg/kg en chocolate amargo y porcentaje de fermentación inferior al 75% (granos pizarrosos y violetas).',
+        estrategiaDua: 'Múltiples opciones para el compromiso (DUA Pauta 7): Debate a partir de una muestra física de granos cortados con guillotina de prueba y lectura de la normativa europea de inocuidad.',
+        preguntaProblematizadora: '¿Cómo afecta la falta de volteo periódico en cajones de fermentación la reputación del cacao colombiano y el ingreso del pequeño agricultor?',
+        multilinguismo: 'Términos analizados: "Fine or Flavour Cocoa / Cacao Fin et d’Arôme", "Heavy Metals / Métaux Lourds".'
+      },
+      contextualizacion: {
+        titulo: '3.2 Estaciones de corte y prueba de grano (Cut Test)',
+        descripcion: 'Práctica diagnóstica con guillotina de prueba de corte de 100 granos (NTC 1252 / ISO 2451) para clasificar granos bien fermentados, pizarrosos, violetas, mohosos o picados por insectos.',
+        estrategiaDua: 'DUA Pauta 1: Muestras táctiles, cartas de color estandarizadas y registro colaborativo en cuadrillas campesinas.',
+        actividadDiagnostica: 'Diligenciamiento de la matriz de índice de fermentación y determinación de humedad con higrómetro de grano.',
+        multilinguismo: 'Vocabulario clave: "Cut Test / Test de Coupe", "Moisture Content / Teneur en Eau".'
+      },
+      apropiacion: {
+        titulo: '3.3 Actividades de Apropiación Cognitiva y Procedimental en Cacao',
+        subactividadesCognitivas: [
+          '3.3.1 Sucesión microbiana en fermentación: Fase anaeróbica alcohólica (levaduras), acética (Acetobacter) y láctica.',
+          '3.3.2 Parámetros críticos de secado en paseras de madera y prevención de ocratoxina A.',
+          '3.3.3 Protocolo de remediación de cadmio con enmiendas de biocarbón (biochar) y microorganismos solubilizadores.'
+        ],
+        subactividadesProcedimentales: [
+          '3.3.4 Llenado de cajones de fermentación y registro diario de temperatura (alcanzando 48-50°C a las 72 horas).',
+          '3.3.5 Ejecución de volteos cada 24 horas y monitoreo de pH en cotiledón y pulpa.',
+          '3.3.6 Secado solar gradual en marquesina reduciendo humedad de 55% a 7% sin endurecimiento prematuro de cascarilla.'
+        ],
+        estrategiaDua: 'DUA Pauta 2 y 4: Fichas técnicas plastificadas, diagramas de temperatura paso a paso y registro digital offline en dispositivos móviles.',
+        multilinguismo: 'Glosario aplicado: "Cocoa Liquor / Masse de Cacao", "Fairtrade / Commerce Équitable", "Organic Certification / Certification Biologique".'
+      },
+      transferencia: {
+        titulo: '3.4 Reto: Estandarización y Trazabilidad de un Lote de Cacao Especial',
+        descripcion: 'El equipo de aprendices procesa un lote de 100 kg de cacao en grano seco, ejecuta la prueba de corte certificando más del 80% de fermentación y redacta la ficha técnica trilingüe para exportación.',
+        estrategiaDua: 'DUA Pauta 5 y 6: Entrega en formato físico con muestra de grano clasificado o catálogo virtual con video de la fermentación.',
+        retoEnFinca: 'Alcanzar estándar de cacao fino de aroma libre de mohos y acidez residual excesiva.',
+        multilinguismo: 'Presentación ejecutiva del perfil de sabor (frutal, floral, nuez) en español, inglés y francés.'
+      }
+    },
+    evaluacion: [
+      {
+        criterio: 'Aplica el protocolo de prueba de corte de cacao según la norma técnica NTC 1252 / ISO 2451.',
+        evidencia: 'Reporte técnico de prueba de corte con porcentaje de fermentación.',
+        tipo: 'Conocimiento',
+        tecnica: 'Evaluación técnica de laboratorio',
+        instrumento: 'Cuestionario y matriz de porcentaje de grano'
+      },
+      {
+        criterio: 'Controla las variables de temperatura, pH y volteos durante la fermentación en cajones de madera.',
+        evidencia: 'Registro procedimental de la curva de fermentación y volteos.',
+        tipo: 'Desempeño',
+        tecnica: 'Observación directa en marquesina y cajones',
+        instrumento: 'Lista de chequeo de monitoreo térmico'
+      },
+      {
+        criterio: 'Entrega el lote de cacao secado al 7% de humedad con ficha técnica trilingüe y trazabilidad.',
+        evidencia: 'Lote de grano beneficiado y ficha técnica de exportación.',
+        tipo: 'Producto',
+        tecnica: 'Inspección de lote y auditoría documental',
+        instrumento: 'Rúbrica de calidad física y organoléptica'
+      }
+    ],
+    glosario: MULTILINGUAL_GLOSSARY_PRESET,
+    referentesBibliograficos: [
+      'Fedecacao. (2022). Guía técnica para el beneficio y aseguramiento de la calidad del cacao en Colombia. Federación Nacional de Cacaoteros.',
+      'ICCO. (2021). International Cocoa Agreement and Fine or Flavour Cocoa Definitions. International Cocoa Organization, Abidjan.',
+      'Agrosavia. (2020). Estrategias para la mitigación y manejo de cadmio en suelos cultivados con cacao. Mosquera, Colombia.'
+    ],
+    controlDocumento: {
+      autor: 'Equipo Técnico de Cacao y Poscosecha',
+      cargo: 'Instructores de Agroindustria y Agroecología FPI',
+      dependencia: 'SENA Regional Santander / Centro Agroempresarial y Turístico de los Andes',
+      fecha: 'Octubre de 2026'
+    }
   }
 ];
+
+export function createEmptyGuide(): LearningGuideModel {
+  return {
+    id: `guia-personalizada-${Date.now()}`,
+    title: 'Nueva Guía de Aprendizaje Agropecuaria Personalizada',
+    identificacion: {
+      denominacionPrograma: 'Técnico / Tecnólogo Agropecuario',
+      codigoPrograma: '723100 Versión 101',
+      nombreProyecto: 'Proyecto Agropecuario Productivo Sostenible',
+      faseProyecto: 'Fase de Ejecución',
+      actividadProyecto: 'AP 1: Ejecutar labores técnicas según manuales de procedimiento',
+      competencia: 'Coordinar labores de producción agropecuaria según criterios técnicos y de sostenibilidad',
+      resultadosAprendizaje: [
+        'RAP 01: Caracterizar las condiciones técnicas y agroecológicas del cultivo o explotación.',
+        'RAP 02: Implementar labores culturales y manejo fitosanitario según normativa BPA.',
+        'RAP 03: Documentar y comunicar resultados técnicos en contextos nacionales e internacionales.'
+      ],
+      duracionGuiaHoras: 40,
+      regional: 'Regional SENA',
+      centroFormacion: 'Centro Agropecuario'
+    },
+    presentacion: 'Estimado Aprendiz: Esta guía de aprendizaje orienta el desarrollo de competencias laborales en el marco del Modelo de Formación Profesional Integral (FPI), aplicando los principios del Diseño Universal para el Aprendizaje (DUA) y fortaleciendo el uso de vocabulario técnico trilingüe en los sectores agropecuario y agroexportador.',
+    actividades: {
+      reflexionInicial: {
+        titulo: '3.1 Actividad de Reflexión Inicial: Situación Problematizadora',
+        descripcion: 'Planteamiento de un dilema real productivo o de comercialización para activar las redes afectivas de los aprendices sin calificación previa.',
+        preguntaProblematizadora: '¿De qué forma las decisiones técnicas tomadas en campo influyen en la sostenibilidad ambiental y la rentabilidad de los productores?',
+        estrategiaDua: 'Múltiples opciones para la motivación (DUA Pauta 7): Presentación en audio, texto y video.',
+        multilinguismo: 'Identificación de conceptos clave en español, inglés y francés.'
+      },
+      contextualizacion: {
+        titulo: '3.2 Actividades de Contextualización e Identificación de Conocimientos',
+        descripcion: 'Estaciones de autodiagnóstico en campo y comparación guiada de saberes empíricos previos frente al estándar técnico normativo.',
+        estrategiaDua: 'Trabajo colaborativo con roles rotativos y material táctil/visual (DUA Pauta 8.3).',
+        actividadDiagnostica: 'Levantamiento de línea base en parcela o predio formativo.',
+        multilinguismo: 'Manejo de terminología básica de calibración y muestreo.'
+      },
+      apropiacion: {
+        titulo: '3.3 Actividades de Apropiación del Conocimiento (Cognitiva y Procedimental)',
+        subactividadesCognitivas: [
+          '3.3.1 Fundamentación teórica y marco normativo aplicable.',
+          '3.3.2 Cálculos matemáticos y dosificación de insumos.'
+        ],
+        subactividadesProcedimentales: [
+          '3.3.3 Práctica guiada en parcela demostrativa.',
+          '3.3.4 Diligenciamiento de registros y bitácoras técnicas.'
+        ],
+        estrategiaDua: 'Presentación multimodal de la información con guías ilustradas y videos offline (DUA Pauta 1 y 2).',
+        multilinguismo: 'Glosario técnico integrado y lectura de fichas técnicas trilingües.'
+      },
+      transferencia: {
+        titulo: '3.4 Actividades de Transferencia del Conocimiento (Reto en Finca)',
+        descripcion: 'Aplicación integral de lo aprendido en una unidad productiva real o proyecto formativo de los aprendices.',
+        retoEnFinca: 'Diseñar e implementar el plan de intervención técnica con criterios de calidad y sostenibilidad.',
+        estrategiaDua: 'Múltiples opciones para la demostración de la competencia (oral, escrita, audiovisual o maqueta) - DUA Pauta 5.',
+        multilinguismo: 'Redacción de resumen técnico en español con soporte en inglés o francés.'
+      }
+    },
+    evaluacion: [
+      {
+        criterio: 'Aplica los conceptos técnicos y normativos en la solución de problemas agropecuarios.',
+        evidencia: 'Cuestionario de conceptos y glosario técnico.',
+        tipo: 'Conocimiento',
+        tecnica: 'Formulación de preguntas',
+        instrumento: 'Cuestionario estructurado'
+      },
+      {
+        criterio: 'Ejecuta las labores en campo aplicando normas de bioseguridad y uso de EPP.',
+        evidencia: 'Demostración práctica en parcela.',
+        tipo: 'Desempeño',
+        tecnica: 'Observación directa',
+        instrumento: 'Lista de chequeo'
+      },
+      {
+        criterio: 'Presenta el informe técnico final y los registros de la unidad productiva.',
+        evidencia: 'Bitácora diligenciada y ficha técnica del cultivo.',
+        tipo: 'Producto',
+        tecnica: 'Valoración de producto',
+        instrumento: 'Rúbrica analítica'
+      }
+    ],
+    glosario: MULTILINGUAL_GLOSSARY_PRESET,
+    referentesBibliograficos: [
+      'SENA. (2021). Guía para la Formación Profesional Integral por Competencias.',
+      'Manual Técnico del Sector Agropecuario Colombiano.'
+    ],
+    controlDocumento: {
+      autor: 'Instructor Metodólogo SENA',
+      cargo: 'Instructor FPI Agropecuario',
+      dependencia: 'Centro de Formación Agropecuaria',
+      fecha: '2026'
+    }
+  };
+}

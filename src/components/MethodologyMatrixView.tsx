@@ -1,16 +1,34 @@
 import React, { useState } from 'react';
 import { METHODOLOGY_MATRIX_DATA, DuaMethodologyRow } from '../data/curriculumData';
-import { Layers, Copy, Check, Filter, Search, Download, HelpCircle, FileSpreadsheet } from 'lucide-react';
+import { 
+  Layers, 
+  Copy, 
+  Check, 
+  Filter, 
+  Search, 
+  Download, 
+  FileSpreadsheet, 
+  Volume2, 
+  Printer, 
+  X, 
+  ExternalLink,
+  Sparkles
+} from 'lucide-react';
 
 export const MethodologyMatrixView: React.FC = () => {
   const [filterPrinciple, setFilterPrinciple] = useState<string>('all');
+  const [filterFase, setFilterFase] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+  const [copiedRow, setCopiedRow] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<DuaMethodologyRow | null>(null);
+  const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
   const filteredData = METHODOLOGY_MATRIX_DATA.filter((row) => {
     const matchesPrinciple =
       filterPrinciple === 'all' || row.principioDua.includes(filterPrinciple);
+    const matchesFase =
+      filterFase === 'all' || row.faseCodigo === filterFase;
     const matchesSearch =
       searchQuery === '' ||
       row.momentoSena.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -20,12 +38,12 @@ export const MethodologyMatrixView: React.FC = () => {
       row.integracionMultilingue.fr.toLowerCase().includes(searchQuery.toLowerCase()) ||
       row.evidenciaAprendizaje.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesPrinciple && matchesSearch;
+    return matchesPrinciple && matchesFase && matchesSearch;
   });
 
   const copyMarkdownTable = () => {
     const tableHeader = `| Momento Didáctico SENA | Principio DUA | Estrategia Agropecuaria Aplicada | Integración Multilingüe [ES / EN / FR] | Evidencia de Aprendizaje |\n| :--- | :--- | :--- | :--- | :--- |\n`;
-    const tableRows = METHODOLOGY_MATRIX_DATA.map(
+    const tableRows = filteredData.map(
       (r) =>
         `| **${r.momentoSena}** | **${r.principioDua}**<br>${r.pautaDua} | ${r.estrategiaAgropecuaria.replace(/\n/g, ' ')} | **ES:** ${r.integracionMultilingue.es}<br>**EN:** ${r.integracionMultilingue.en}<br>**FR:** ${r.integracionMultilingue.fr}<br>*Uso:* ${r.integracionMultilingue.usoTecnico} | **${r.tipoEvidencia}:** ${r.evidenciaAprendizaje} |`
     ).join('\n');
@@ -35,13 +53,34 @@ export const MethodologyMatrixView: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  const copySingleRowMarkdown = (r: DuaMethodologyRow) => {
+    const rowMd = `### Momento SENA: ${r.momentoSena} (Fase ${r.faseCodigo})\n- **Principio DUA:** ${r.principioDua} (${r.pautaDua})\n- **Estrategia Agropecuaria:** ${r.estrategiaAgropecuaria}\n- **Multilingüismo:** ES: ${r.integracionMultilingue.es} | EN: ${r.integracionMultilingue.en} | FR: ${r.integracionMultilingue.fr}\n- **Evidencia (${r.tipoEvidencia}):** ${r.evidenciaAprendizaje}`;
+    navigator.clipboard.writeText(rowMd);
+    setCopiedRow(true);
+    setTimeout(() => setCopiedRow(false), 2500);
+  };
+
+  const playSpeech = (text: string, lang: 'es-ES' | 'en-US' | 'fr-FR', key: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      u.rate = 0.9;
+      u.onend = () => setPlayingAudio(null);
+      u.onerror = () => setPlayingAudio(null);
+      setPlayingAudio(key);
+      window.speechSynthesis.speak(u);
+    }
+  };
+
   const downloadCsv = () => {
-    const headers = ['Momento Didactico SENA', 'Principio DUA', 'Pauta DUA', 'Estrategia Agropecuaria', 'Termino ES', 'Termino EN', 'Termino FR', 'Evidencia de Aprendizaje', 'Tipo Evidencia'];
+    const headers = ['Momento Didactico SENA', 'Fase FPI', 'Principio DUA', 'Pauta DUA', 'Estrategia Agropecuaria', 'Termino ES', 'Termino EN', 'Termino FR', 'Evidencia de Aprendizaje', 'Tipo Evidencia'];
     const csvRows = [headers.join(',')];
 
-    METHODOLOGY_MATRIX_DATA.forEach(row => {
+    filteredData.forEach(row => {
       const escaped = [
         `"${row.momentoSena}"`,
+        `"${row.faseCodigo}"`,
         `"${row.principioDua}"`,
         `"${row.pautaDua.replace(/"/g, '""')}"`,
         `"${row.estrategiaAgropecuaria.replace(/"/g, '""')}"`,
@@ -57,11 +96,15 @@ export const MethodologyMatrixView: React.FC = () => {
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'matriz_metodologica_sena_dua_agropecuaria.csv');
+    link.href = url;
+    link.download = 'matriz_metodologica_sena_dua_agropecuaria.csv';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -82,7 +125,7 @@ export const MethodologyMatrixView: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={copyMarkdownTable}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-sm cursor-pointer"
@@ -100,12 +143,20 @@ export const MethodologyMatrixView: React.FC = () => {
             <FileSpreadsheet className="h-4 w-4 text-emerald-700" />
             <span className="hidden sm:inline">Descargar CSV</span>
           </button>
+
+          <button
+            onClick={handlePrint}
+            className="p-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all border border-slate-200 cursor-pointer"
+            title="Imprimir o Exportar PDF de la Matriz"
+          >
+            <Printer className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
       {/* Filters and Search Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 flex-1">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -113,64 +164,130 @@ export const MethodologyMatrixView: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar por momento, término o estrategia..."
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+              className="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-          {searchQuery && (
+
+          {/* Principle Filter Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs">
+            <span className="text-slate-400 font-medium mr-1 flex items-center gap-1">
+              <Filter className="h-3 w-3" /> Red DUA:
+            </span>
             <button
-              onClick={() => setSearchQuery('')}
-              className="text-xs text-slate-500 hover:text-slate-700 underline"
+              onClick={() => setFilterPrinciple('all')}
+              className={`px-2.5 py-1 rounded-md font-medium transition-all cursor-pointer ${
+                filterPrinciple === 'all'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
             >
-              Limpiar
+              Todas
             </button>
-          )}
+            <button
+              onClick={() => setFilterPrinciple('Compromiso')}
+              className={`px-2.5 py-1 rounded-md font-medium transition-all cursor-pointer ${
+                filterPrinciple === 'Compromiso'
+                  ? 'bg-emerald-700 text-white shadow-sm'
+                  : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+              }`}
+            >
+              Compromiso (Afectivas)
+            </button>
+            <button
+              onClick={() => setFilterPrinciple('Representación')}
+              className={`px-2.5 py-1 rounded-md font-medium transition-all cursor-pointer ${
+                filterPrinciple === 'Representación'
+                  ? 'bg-purple-700 text-white shadow-sm'
+                  : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+              }`}
+            >
+              Representación (Reconocimiento)
+            </button>
+            <button
+              onClick={() => setFilterPrinciple('Acción y Expresión')}
+              className={`px-2.5 py-1 rounded-md font-medium transition-all cursor-pointer ${
+                filterPrinciple === 'Acción y Expresión'
+                  ? 'bg-sky-700 text-white shadow-sm'
+                  : 'bg-sky-50 text-sky-700 hover:bg-sky-100'
+              }`}
+            >
+              Acción/Expresión (Estratégicas)
+            </button>
+          </div>
         </div>
 
-        {/* Principle Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs">
-          <span className="text-slate-400 font-medium mr-1 flex items-center gap-1">
-            <Filter className="h-3 w-3" /> Principio:
-          </span>
+        {/* Phase Filter Bar */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100 text-xs">
+          <span className="text-slate-400 font-medium mr-1">Momento SENA:</span>
           <button
-            onClick={() => setFilterPrinciple('all')}
-            className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-              filterPrinciple === 'all'
-                ? 'bg-slate-900 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            onClick={() => setFilterFase('all')}
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+              filterFase === 'all' ? 'bg-emerald-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Todos
+            Todos los Momentos
           </button>
           <button
-            onClick={() => setFilterPrinciple('Compromiso')}
-            className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-              filterPrinciple === 'Compromiso'
-                ? 'bg-emerald-700 text-white'
-                : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+            onClick={() => setFilterFase('3.1')}
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+              filterFase === '3.1' ? 'bg-emerald-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Compromiso
+            3.1 Reflexión Inicial
           </button>
           <button
-            onClick={() => setFilterPrinciple('Representación')}
-            className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-              filterPrinciple === 'Representación'
-                ? 'bg-purple-700 text-white'
-                : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+            onClick={() => setFilterFase('3.2')}
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+              filterFase === '3.2' ? 'bg-emerald-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Representación
+            3.2 Contextualización
           </button>
           <button
-            onClick={() => setFilterPrinciple('Acción y Expresión')}
-            className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-              filterPrinciple === 'Acción y Expresión'
-                ? 'bg-sky-700 text-white'
-                : 'bg-sky-50 text-sky-700 hover:bg-sky-100'
+            onClick={() => setFilterFase('3.3')}
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+              filterFase === '3.3' ? 'bg-emerald-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Acción y Expresión
+            3.3 Apropiación
           </button>
+          <button
+            onClick={() => setFilterFase('3.4')}
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+              filterFase === '3.4' ? 'bg-emerald-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            3.4 Transferencia
+          </button>
+          <button
+            onClick={() => setFilterFase('4.0')}
+            className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+              filterFase === '4.0' ? 'bg-emerald-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            4.0 Evaluación
+          </button>
+
+          {(filterPrinciple !== 'all' || filterFase !== 'all' || searchQuery !== '') && (
+            <button
+              onClick={() => {
+                setFilterPrinciple('all');
+                setFilterFase('all');
+                setSearchQuery('');
+              }}
+              className="ml-auto text-[11px] text-emerald-700 hover:underline font-bold"
+            >
+              Restablecer Filtros
+            </button>
+          )}
         </div>
       </div>
 
@@ -203,6 +320,7 @@ export const MethodologyMatrixView: React.FC = () => {
                   key={row.id}
                   onClick={() => setSelectedRow(row)}
                   className="hover:bg-emerald-50/50 transition-colors divide-x divide-slate-100 cursor-pointer group"
+                  title="Haga clic para ver el detalle pedagógico ampliado y escuchar la terminología"
                 >
                   {/* Momento SENA */}
                   <td className="py-4 px-4 align-top">
@@ -237,22 +355,25 @@ export const MethodologyMatrixView: React.FC = () => {
                   {/* Estrategia Agropecuaria */}
                   <td className="py-4 px-4 align-top leading-relaxed text-slate-700">
                     <p className="text-xs sm:text-[13px]">{row.estrategiaAgropecuaria}</p>
+                    <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-bold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span>Ver detalles y audios</span> →
+                    </span>
                   </td>
 
                   {/* Multilingüe */}
                   <td className="py-4 px-4 align-top space-y-1.5 font-mono text-[11px]">
                     <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 space-y-1">
-                      <div>
-                        <span className="font-bold text-emerald-700">ES:</span>{' '}
-                        <span className="text-slate-800">{row.integracionMultilingue.es}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-emerald-700">ES:</span>
+                        <span className="text-slate-800 truncate ml-1">{row.integracionMultilingue.es}</span>
                       </div>
-                      <div>
-                        <span className="font-bold text-sky-700">EN:</span>{' '}
-                        <span className="text-slate-800">{row.integracionMultilingue.en}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-sky-700">EN:</span>
+                        <span className="text-slate-800 truncate ml-1">{row.integracionMultilingue.en}</span>
                       </div>
-                      <div>
-                        <span className="font-bold text-purple-700">FR:</span>{' '}
-                        <span className="text-slate-800">{row.integracionMultilingue.fr}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-purple-700">FR:</span>
+                        <span className="text-slate-800 truncate ml-1">{row.integracionMultilingue.fr}</span>
                       </div>
                       <div className="pt-1 border-t border-slate-200 text-[10px] text-slate-500 italic">
                         {row.integracionMultilingue.usoTecnico}
@@ -284,8 +405,18 @@ export const MethodologyMatrixView: React.FC = () => {
         </div>
 
         {filteredData.length === 0 && (
-          <div className="p-8 text-center text-slate-500">
-            No se encontraron filas que coincidan con el criterio de búsqueda.
+          <div className="p-8 text-center text-slate-500 space-y-2">
+            <p>No se encontraron filas que coincidan con el criterio de búsqueda o filtro seleccionado.</p>
+            <button
+              onClick={() => {
+                setFilterPrinciple('all');
+                setFilterFase('all');
+                setSearchQuery('');
+              }}
+              className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-bold"
+            >
+              Restablecer Filtros
+            </button>
           </div>
         )}
       </div>
@@ -329,22 +460,55 @@ export const MethodologyMatrixView: React.FC = () => {
                 </p>
               </div>
 
+              {/* Trilingual pronunciation station */}
               <div className="p-3 bg-sky-50/50 rounded-xl border border-sky-100">
-                <h4 className="font-bold text-sky-900 text-xs uppercase mb-1">
-                  Articulación Lingüística Trilingüe
-                </h4>
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="font-bold text-sky-900 text-xs uppercase">
+                    Articulación Lingüística Trilingüe (Haga clic para escuchar)
+                  </h4>
+                  <span className="text-[10px] text-sky-700 font-mono">Audio Web Speech</span>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono mt-1">
-                  <div className="bg-white p-2 rounded border border-slate-200">
-                    <span className="font-bold text-emerald-600 block">Español</span>
-                    {selectedRow.integracionMultilingue.es}
+                  <div className="bg-white p-2.5 rounded border border-slate-200 flex flex-col justify-between">
+                    <div>
+                      <span className="font-bold text-emerald-600 block text-[10px]">Español</span>
+                      <span className="text-slate-800 font-semibold">{selectedRow.integracionMultilingue.es}</span>
+                    </div>
+                    <button
+                      onClick={() => playSpeech(selectedRow.integracionMultilingue.es, 'es-ES', 'modal-es')}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-emerald-700 hover:text-emerald-900 font-bold cursor-pointer"
+                    >
+                      <Volume2 className={`h-3.5 w-3.5 ${playingAudio === 'modal-es' ? 'animate-pulse text-emerald-600' : ''}`} />
+                      <span>Escuchar</span>
+                    </button>
                   </div>
-                  <div className="bg-white p-2 rounded border border-slate-200">
-                    <span className="font-bold text-sky-600 block">Inglés</span>
-                    {selectedRow.integracionMultilingue.en}
+
+                  <div className="bg-white p-2.5 rounded border border-slate-200 flex flex-col justify-between">
+                    <div>
+                      <span className="font-bold text-sky-600 block text-[10px]">Inglés</span>
+                      <span className="text-slate-800 font-semibold">{selectedRow.integracionMultilingue.en}</span>
+                    </div>
+                    <button
+                      onClick={() => playSpeech(selectedRow.integracionMultilingue.en, 'en-US', 'modal-en')}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-sky-700 hover:text-sky-900 font-bold cursor-pointer"
+                    >
+                      <Volume2 className={`h-3.5 w-3.5 ${playingAudio === 'modal-en' ? 'animate-pulse text-sky-600' : ''}`} />
+                      <span>Pronunciar</span>
+                    </button>
                   </div>
-                  <div className="bg-white p-2 rounded border border-slate-200">
-                    <span className="font-bold text-purple-600 block">Francés</span>
-                    {selectedRow.integracionMultilingue.fr}
+
+                  <div className="bg-white p-2.5 rounded border border-slate-200 flex flex-col justify-between">
+                    <div>
+                      <span className="font-bold text-purple-600 block text-[10px]">Francés</span>
+                      <span className="text-slate-800 font-semibold">{selectedRow.integracionMultilingue.fr}</span>
+                    </div>
+                    <button
+                      onClick={() => playSpeech(selectedRow.integracionMultilingue.fr, 'fr-FR', 'modal-fr')}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-purple-700 hover:text-purple-900 font-bold cursor-pointer"
+                    >
+                      <Volume2 className={`h-3.5 w-3.5 ${playingAudio === 'modal-fr' ? 'animate-pulse text-purple-600' : ''}`} />
+                      <span>Prononcer</span>
+                    </button>
                   </div>
                 </div>
                 <p className="text-[11px] text-slate-600 mt-2 italic">
@@ -363,7 +527,15 @@ export const MethodologyMatrixView: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+              <button
+                onClick={() => copySingleRowMarkdown(selectedRow)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold cursor-pointer border border-slate-200"
+              >
+                {copiedRow ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedRow ? '¡Fila Copiada!' : 'Copiar esta Fila en Markdown'}</span>
+              </button>
+
               <button
                 onClick={() => setSelectedRow(null)}
                 className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-slate-800 cursor-pointer"
